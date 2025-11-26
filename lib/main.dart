@@ -1,25 +1,24 @@
 import 'package:flutter/material.dart';
-import 'dao/history_dao.dart';
-import 'models/history.dart';
+import 'package:google_fonts/google_fonts.dart';
+import '../ui/ui_splash.dart';
+void main() {
+  runApp(const MyApp());
+}
 
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
 
-  final dao = HistoryDao();
-
-  await dao.insertHistory(
-    History(
-      date: DateTime.now().toIso8601String(),
-      bandType: 4,
-      colors: "red, violet, yellow, gold",
-      result: 47000,
-      tolerance: "±5%",
-      resultString: "47 kΩ ±5%",
-    ),
-  );
-
-  final histories = await dao.getHistory();
-  print(histories.map((e) => e.resultString).toList());
-
-  runApp(const MaterialApp(home: Scaffold(body: Center(child: Text("DB OK")))));
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'ResiFy App',
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
+        textTheme: GoogleFonts.albertSansTextTheme(),
+        useMaterial3: true,
+      ),
+      home: const SplashPage(), 
+    );
+  }
 }

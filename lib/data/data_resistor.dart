@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../models/model_resistor.dart';
+import '../model/model_resistor.dart';
 
 class ResistorData {
   static const List<ResistorBand> bands = [
