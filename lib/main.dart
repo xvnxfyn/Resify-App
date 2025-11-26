@@ -1,34 +1,25 @@
 import 'package:flutter/material.dart';
-import 'ui/home_page.dart';
-import 'ui/resistor_home_page.dart';  // halaman kalkulator
-import 'database/app_database.dart';
+import 'dao/history_dao.dart';
+import 'models/history.dart';
 
-void main()async {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await AppDatabase.instance.database;
-  
-  final ResistorDao resistorDao = ResistorDao();
-  final colors = await resistorDao.getDigitColors(4);
-  print(colors);
-  runApp(const MyApp());
-}
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final dao = HistoryDao();
 
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'ResiFy',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-      ),
-      home: const HomePage(),
+  await dao.insertHistory(
+    History(
+      date: DateTime.now().toIso8601String(),
+      bandType: 4,
+      colors: "red, violet, yellow, gold",
+      result: 47000,
+      tolerance: "±5%",
+      resultString: "47 kΩ ±5%",
+    ),
+  );
 
-      routes: {
-        "/calculator": (_) => const ResistorHomePage(),
-      },
-    );
-  }
+  final histories = await dao.getHistory();
+  print(histories.map((e) => e.resultString).toList());
+
+  runApp(const MaterialApp(home: Scaffold(body: Center(child: Text("DB OK")))));
 }

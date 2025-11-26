@@ -12,9 +12,9 @@ class HomePage extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // LOGO
+
               Image.asset(
-                'assets/images/resify_logo.png',   // sesuaikan dengan path logo kamu
+                'assets/images/resify_logo.png',
                 width: 180,
                 height: 180,
               ),
@@ -27,13 +27,13 @@ class HomePage extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 28,
                   fontWeight: FontWeight.bold,
-                  color: Color(0xffE85A2A),  // warna oranye biar mirip di gambarmu
+                  color: Color(0xffE85A2A),
                 ),
               ),
 
               const SizedBox(height: 24),
 
-              // Tombol untuk masuk ke kalkulator resistor
+
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.deepPurple,
