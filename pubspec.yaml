@@ -11,6 +11,7 @@ dependencies:
   flutter:
     sdk: flutter
   
+  # Dependency ditaruh sejajar dengan flutter
   cupertino_icons: ^1.0.8
   google_fonts: ^6.3.2
 
@@ -18,14 +19,17 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^6.0.0
+  # flutter_launcher_icons adalah alat bantu dev, jadi ditaruh di sini
   flutter_launcher_icons: ^0.13.1
 
+# --- KONFIGURASI UTAMA ---
 
 # 1. Konfigurasi Launcher Icon (Harus di paling kiri/Root level)
 flutter_launcher_icons:
   android: "launcher_icon"
   ios: true
-  image_path: "lib/assets/images/resify_logo.png" 
+  image_path: "assets/images/resify_logo.png" 
+  min_sdk_android: 21
 
 # 2. Konfigurasi Flutter & Assets
 flutter:
