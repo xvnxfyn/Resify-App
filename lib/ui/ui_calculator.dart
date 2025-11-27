@@ -11,29 +11,26 @@ class ResistorCalculatorPage extends StatefulWidget {
 }
 
 class _ResistorCalculatorPageState extends State<ResistorCalculatorPage> {
-  // State: Apakah user memilih mode 5 gelang? (Default false/4 gelang)
   bool isFiveBand = false;
 
-  // State: Pilihan Warna Saat Ini
   ResistorBand? band1;
   ResistorBand? band2;
-  ResistorBand? band3; // Hanya aktif jika isFiveBand = true
+  ResistorBand? band3;
   ResistorBand? multiplier;
   ResistorBand? tolerance;
 
-  // Hasil perhitungan
   String resultText = "Pilih warna";
 
   @override
   void initState() {
     super.initState();
-    // Set nilai default  (Coklat-Hitam-Merah-Emas / 1k Ohm)
+
     band1 = ResistorLogic.digitBands.firstWhere((b) => b.name == 'Cokelat');
     band2 = ResistorLogic.digitBands.firstWhere((b) => b.name == 'Hitam');
     band3 = ResistorLogic.digitBands.firstWhere((b) => b.name == 'Hitam');
     multiplier = ResistorLogic.multiplierBands.firstWhere((b) => b.name == 'Merah');
     tolerance = ResistorLogic.toleranceBands.firstWhere((b) => b.name == 'Emas');
-    
+
     _calculate();
   }
 
@@ -53,112 +50,126 @@ class _ResistorCalculatorPageState extends State<ResistorCalculatorPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Kalkulator Resistor")),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            
-            ResistorIllustration(
-              isFiveBand: isFiveBand, // Terhubung ke state mode 4/5 gelang
-              band1: band1!,           // Terhubung ke state pilihan warna
-              band2: band2!,
-              band3: band3,
-              multiplier: multiplier!,
-              tolerance: tolerance!,
-              ),
-              const SizedBox(height: 30),
-
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text("4 Gelang"),
-                Switch(
-                  value: isFiveBand,
-                  onChanged: (val) {
-                    setState(() {
-                      isFiveBand = val;
-                      _calculate();
-                    });
-                  },
+        appBar: AppBar(title: const Text("Kalkulator Resistor")),
+        body: SingleChildScrollView(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            children: [
+              // RESISTOR
+              AnimatedContainer(
+                duration: const Duration(milliseconds: 300),
+                width: isFiveBand ? 140 : 200,
+                height: isFiveBand ? 55 : 75,
+                child: ResistorIllustration(
+                  isFiveBand: isFiveBand,
+                  band1: band1!,
+                  band2: band2!,
+                  band3: band3,
+                  multiplier: multiplier!,
+                  tolerance: tolerance!,
                 ),
-                Text("5 Gelang"),
-              ],
-            ),
-            SizedBox(height: 20),
+              ),
 
-            // 2. Dropdowns
-            // Gelang 1 (Angka Pertama)
-            _buildDropdown("Gelang 1", band1, ResistorLogic.digitBands, (val) {
-              band1 = val;
-              _calculate();
-            }),
+              const SizedBox(height: 10),
 
-            // Gelang 2 (Angka Kedua)
-            _buildDropdown("Gelang 2", band2, ResistorLogic.digitBands, (val) {
-              band2 = val;
-              _calculate();
-            }),
+              // SWITCH
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text("4 Gelang"),
+                  Switch(
+                    value: isFiveBand,
+                    onChanged: (val) {
+                      setState(() {
+                        isFiveBand = val;
+                        _calculate();
+                      });
+                    },
+                  ),
+                  const Text("5 Gelang"),
+                ],
+              ),
 
-            // Gelang 3 (Angka Ketiga - Hanya muncul jika mode 5 gelang)
-            if (isFiveBand)
-              _buildDropdown("Gelang 3", band3, ResistorLogic.digitBands, (val) {
-                band3 = val;
+              const SizedBox(height: 10),
+
+              // DROPDOWN WRAPPER
+              _buildDropdown("Gelang 1", band1, ResistorLogic.digitBands, (val) {
+                band1 = val;
+                _calculate();
+              }),
+              _buildDropdown("Gelang 2", band2, ResistorLogic.digitBands, (val) {
+                band2 = val;
+                _calculate();
+              }),
+              if (isFiveBand)
+                _buildDropdown("Gelang 3", band3, ResistorLogic.digitBands, (val) {
+                  band3 = val;
+                  _calculate();
+                }),
+              _buildDropdown("Pengali", multiplier, ResistorLogic.multiplierBands, (val) {
+                multiplier = val;
+                _calculate();
+              }),
+              _buildDropdown("Toleransi", tolerance, ResistorLogic.toleranceBands, (val) {
+                tolerance = val;
                 _calculate();
               }),
 
-            // Gelang Multiplier
-            _buildDropdown("Pengali", multiplier, ResistorLogic.multiplierBands, (val) {
-              multiplier = val;
-              _calculate();
-            }),
+              const SizedBox(height: 12),
 
-            // Gelang Toleransi
-            _buildDropdown("Toleransi", tolerance, ResistorLogic.toleranceBands, (val) {
-              tolerance = val;
-              _calculate();
-            }),
-
-            Spacer(),
-
-            // 3. Menampilkan Hasil
-            Container(
-              padding: EdgeInsets.all(20),
-              width: double.infinity,
-              color: Colors.grey[200],
-              child: Column(
-                children: [
-                  Text("Nilai Resistor:", style: TextStyle(fontSize: 18)),
-                  Text(
-                    resultText,
-                    style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: Colors.blue),
-                  ),
-                ],
+              // HASIL
+              Container(
+                padding: const EdgeInsets.all(16),
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  color: Colors.grey[200],
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Column(
+                  children: [
+                    const Text(
+                      "Nilai Resistor:",
+                      style: TextStyle(fontSize: 16),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      resultText,
+                      style: const TextStyle(
+                        fontSize: 28,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.blue,
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ],
-        ),
-      ),
+
+              const SizedBox(height: 30),
+            ],
+          ),
+        )
     );
   }
 
-  // Widget Helper agar kode tidak berulang (Reusable Widget)
   Widget _buildDropdown(
-    String label, 
-    ResistorBand? currentValue, 
-    List<ResistorBand> items, 
-    Function(ResistorBand?) onChanged
-  ) {
+      String label,
+      ResistorBand? currentValue,
+      List<ResistorBand> items,
+      Function(ResistorBand?) onChanged,
+      ) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      padding: const EdgeInsets.symmetric(vertical: 8),
       child: Row(
         children: [
-          Expanded(flex: 2, child: Text(label, style: TextStyle(fontWeight: FontWeight.bold))),
+          Expanded(
+            flex: 2,
+            child: Text(label, style: const TextStyle(fontWeight: FontWeight.bold)),
+          ),
           Expanded(
             flex: 3,
             child: DropdownButtonFormField<ResistorBand>(
               initialValue: currentValue,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 border: OutlineInputBorder(),
                 contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
               ),
@@ -167,7 +178,6 @@ class _ResistorCalculatorPageState extends State<ResistorCalculatorPage> {
                   value: band,
                   child: Row(
                     children: [
-                      // Indikator Warna Kecil (Lingkaran)
                       Container(
                         width: 20,
                         height: 20,
@@ -177,7 +187,7 @@ class _ResistorCalculatorPageState extends State<ResistorCalculatorPage> {
                           border: Border.all(color: Colors.grey),
                         ),
                       ),
-                      SizedBox(width: 10),
+                      const SizedBox(width: 10),
                       Text(band.name),
                     ],
                   ),
@@ -191,3 +201,4 @@ class _ResistorCalculatorPageState extends State<ResistorCalculatorPage> {
     );
   }
 }
+                  

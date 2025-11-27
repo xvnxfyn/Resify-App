@@ -13,7 +13,7 @@ class HomePage extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // Gambar Logo Besar di Atas
+
             Image.asset(
               'lib/assets/images/resify_logo.png',
               width: 150,
@@ -29,7 +29,7 @@ class HomePage extends StatelessWidget {
             ),
             const SizedBox(height: 10),
             
-            // Tombol Navigasi dengan Gambar di dalamnya
+
             ElevatedButton.icon(
               icon: Image.asset(
                 'lib/assets/images/icon_resistor.png', 
