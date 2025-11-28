@@ -1,6 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../ui/ui_splash.dart';
+
+// Import semua halaman yang sudah kita buat di folder UI
+import 'ui/splash_screen.dart';
+import 'ui/onboarding_screen.dart';
+import 'ui/home_screen.dart';
+import 'ui/resistor_screen.dart';
+import 'ui/ohm_screen.dart';
+import 'ui/history_screen.dart';
+
 void main() {
   runApp(const MyApp());
 }
@@ -11,14 +19,42 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'ResiFy App',
-      debugShowCheckedModeBanner: false,
+      title: 'Resify', // Nama Aplikasi di Task Manager
+      debugShowCheckedModeBanner: false, // Menghilangkan pita "Debug" di pojok kanan atas
+      
+      // --- TEMA APLIKASI ---
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
-        textTheme: GoogleFonts.albertSansTextTheme(),
         useMaterial3: true,
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
+        scaffoldBackgroundColor: Colors.white, // Latar belakang putih bersih
+        
+        // Menggunakan Google Fonts (Poppins) biar terlihat modern kayak desain UI/UX
+        textTheme: GoogleFonts.poppinsTextTheme(
+          Theme.of(context).textTheme,
+        ),
+        
+        // Gaya AppBar seragam
+        appBarTheme: const AppBarTheme(
+          backgroundColor: Colors.white,
+          foregroundColor: Colors.black, // Warna teks judul hitam
+          elevation: 0, // Tidak ada bayangan
+          centerTitle: true,
+        ),
       ),
-      home: const SplashPage(), 
+
+      // --- PENGATURAN RUTE (NAVIGASI) ---
+      // Aplikasi dimulai dari Splash Screen ('/')
+      initialRoute: '/',
+      
+      // Daftar alamat halaman aplikasi kita
+      routes: {
+        '/': (context) => const SplashScreen(),
+        '/onboarding': (context) => const OnboardingScreen(),
+        '/home': (context) => const HomeScreen(),
+        '/resistor': (context) => const ResistorScreen(),
+        '/ohm': (context) => const OhmScreen(),
+        '/history': (context) => const HistoryScreen(),
+      },
     );
   }
 }
