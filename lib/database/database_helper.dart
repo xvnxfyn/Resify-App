@@ -14,6 +14,11 @@ class DatabaseHelper {
     return _database!;
   }
 
+  Future<int> deleteAllHistory() async {
+    Database db = await instance.database;
+    return await db.delete('history'); // 'history' adalah nama tabel Anda
+}
+
   Future<Database> _initDB(String filePath) async {
     final dbPath = await getDatabasesPath();
     final path = join(dbPath, filePath);
