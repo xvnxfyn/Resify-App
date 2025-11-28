@@ -19,21 +19,21 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Resify', // Nama Aplikasi di Task Manager
-      debugShowCheckedModeBanner: false, // Menghilangkan pita "Debug" di pojok kanan atas
+      title: 'Resify', // Nama Aplikasi 
+      debugShowCheckedModeBanner: false,
       
       // --- TEMA APLIKASI ---
       theme: ThemeData(
         useMaterial3: true,
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
-        scaffoldBackgroundColor: Colors.white, // Latar belakang putih bersih
+        scaffoldBackgroundColor: Colors.white, 
         
-        // Menggunakan Google Fonts (Poppins) biar terlihat modern kayak desain UI/UX
+        
         textTheme: GoogleFonts.poppinsTextTheme(
           Theme.of(context).textTheme,
         ),
         
-        // Gaya AppBar seragam
+        // Gaya AppBar
         appBarTheme: const AppBarTheme(
           backgroundColor: Colors.white,
           foregroundColor: Colors.black, // Warna teks judul hitam
