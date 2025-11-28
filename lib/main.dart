@@ -29,7 +29,7 @@ class MyApp extends StatelessWidget {
         scaffoldBackgroundColor: Colors.white, 
         
         
-        textTheme: GoogleFonts.poppinsTextTheme(
+        textTheme: GoogleFonts.albertSansTextTheme(
           Theme.of(context).textTheme,
         ),
         

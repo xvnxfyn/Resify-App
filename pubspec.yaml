@@ -39,4 +39,6 @@ flutter:
 
   # Daftarkan folder aset gambar di sini
   assets:
-    - lib/assets/images/
+    - lib/assets/images/resify_logo.png
+    - lib/assets/images/icon_resistor.png
+    - lib/assets/images/icon_kalkulator.png
