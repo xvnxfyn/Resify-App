@@ -10,7 +10,7 @@ class HistoryScreen extends StatefulWidget {
 
 class _HistoryScreenState extends State<HistoryScreen> {
   
-  // --- FUNGSI POPUP KONFIRMASI HAPUS SEMUA ---
+// Fungsi Pop-up Konfirmasi Hapus Semua
   void _showDeleteConfirmation(BuildContext context) {
     showDialog(
       context: context,
@@ -25,8 +25,8 @@ class _HistoryScreenState extends State<HistoryScreen> {
             ),
             TextButton(
               onPressed: () async {
-                Navigator.of(ctx).pop(); // Tutup dialog
-                await DatabaseHelper.instance.deleteAllHistory(); // Hapus semua data
+                Navigator.of(ctx).pop();
+                await DatabaseHelper.instance.deleteAllHistory(); 
                 setState(() {}); // Refresh UI
                 
                 if (mounted) {
@@ -49,7 +49,6 @@ class _HistoryScreenState extends State<HistoryScreen> {
       appBar: AppBar(title: const Text("Riwayat"), centerTitle: true),
       body: Column(
         children: [
-          // 1. LIST RIWAYAT
           Expanded(
             child: FutureBuilder<List<HistoryModel>>(
               future: DatabaseHelper.instance.getAllHistory(),
@@ -90,7 +89,6 @@ class _HistoryScreenState extends State<HistoryScreen> {
             ),
           ),
 
-          // 2. TOMBOL HAPUS SEMUA (STICKY DI BAWAH)
           Container(
             width: double.infinity,
             padding: const EdgeInsets.all(16.0),

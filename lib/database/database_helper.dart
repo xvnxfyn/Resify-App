@@ -16,7 +16,7 @@ class DatabaseHelper {
 
   Future<int> deleteAllHistory() async {
     Database db = await instance.database;
-    return await db.delete('history'); // 'history' adalah nama tabel Anda
+    return await db.delete('history');
 }
 
   Future<Database> _initDB(String filePath) async {
