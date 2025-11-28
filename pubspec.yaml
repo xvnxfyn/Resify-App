@@ -1,47 +1,42 @@
 name: resify
-description: "A new Flutter project."
-publish_to: 'none' 
-
+description: "Aplikasi Kalkulator Teknik Resistor & Ohm"
+publish_to: 'none'
 version: 1.0.0+1
 
 environment:
-  sdk: ^3.10.1
+  sdk: '>=3.0.0 <4.0.0'
 
 dependencies:
   flutter:
     sdk: flutter
-  
-  # Dependency ditaruh sejajar dengan flutter
-  cupertino_icons: ^1.0.8
-  google_fonts: ^6.3.2
-  sqflite: ^2.2.8+4
-  path_provider: ^2.0.15
-  path: ^1.8.3
+
+  # --- DEPENDENCIES (PUSTAKA) ---
+  cupertino_icons: ^1.0.2
+  google_fonts: ^6.1.0    # Biar font aplikasi bagus
+  sqflite: ^2.3.0         # Database Lokal (Wajib buat fitur History)
+  path: ^1.8.3            # Helper buat nyari lokasi database
+  intl: ^0.18.1           # Format Tanggal (Wajib buat fitur History)
+  # -----------------------------
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^6.0.0
-  # flutter_launcher_icons adalah alat bantu dev, jadi ditaruh di sini
+  flutter_lints: ^2.0.0
+  # Alat pembuat icon aplikasi (Settingan kamu sebelumnya)
   flutter_launcher_icons: ^0.13.1
 
-# --- KONFIGURASI UTAMA ---
-
-# 1. Konfigurasi Launcher Icon (Harus di paling kiri/Root level)
+# --- KONFIGURASI ICON APLIKASI ---
 flutter_launcher_icons:
   android: "launcher_icon"
   ios: true
-  image_path: "assets/images/resify_logo.png" 
+  # Pastikan file resify_logo.png ada di folder ini
+  image_path: "lib/assets/images/resify_logo.png"
   min_sdk_android: 21
 
-# 2. Konfigurasi Flutter & Assets
+# --- KONFIGURASI FLUTTER & ASET ---
 flutter:
   uses-material-design: true
 
-  # Pastikan path ini sesuai dengan folder Anda.
-  # SANGAT DISARANKAN: Pindahkan folder assets agar sejajar dengan lib (di root), 
-  # bukan di dalam lib. Jadi path-nya menjadi:
+  # Daftarkan folder aset gambar di sini
   assets:
-    - lib/assets/images/resify_logo.png
-    - lib/assets/images/icon_resistor.png
-    - lib/assets/images/icon_kalkulator.png
+    - lib/assets/images/
