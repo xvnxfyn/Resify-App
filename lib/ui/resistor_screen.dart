@@ -16,38 +16,53 @@ class _ResistorScreenState extends State<ResistorScreen> {
   String result = "Belum dihitung";
   bool hasCalculated = false;
 
-  Color _getColor(String? colorName) {
-    switch (colorName) {
-      case 'Hitam': return Colors.black;
-      case 'Cokelat': return const Color(0xFF795548);
-      case 'Merah': return Colors.red;
-      case 'Oranye': return Colors.orange;
-      case 'Kuning': return Colors.yellow;
-      case 'Hijau': return Colors.green;
-      case 'Biru': return Colors.blue;
-      case 'Ungu': return Colors.purple;
-      case 'Abu-abu': return Colors.grey;
-      case 'Putih': return Colors.white;
-      case 'Emas': return const Color(0xFFFFD700);
-      case 'Perak': return const Color(0xFFC0C0C0);
-      default: return Colors.transparent;
-    }
-  }
+  static const Map<String, Color> _colorMap = {
+    'Hitam': Colors.black,
+    'Cokelat': Color(0xFF795548),
+    'Merah': Colors.red,
+    'Oranye': Colors.orange,
+    'Kuning': Colors.yellow,
+    'Hijau': Colors.green,
+    'Biru': Colors.blue,
+    'Ungu': Colors.purple,
+    'Abu-abu': Colors.grey,
+    'Putih': Colors.white,
+    'Emas': Color(0xFFFFD700),
+    'Perak': Color(0xFFC0C0C0),
+  };
+
+  Color _getColor(String? colorName) => 
+    colorName != null ? _colorMap[colorName] ?? Colors.transparent : Colors.transparent;
 
   void _calculate() async {
+    final messenger = ScaffoldMessenger.of(context);
+    
     if (color1 == null || color2 == null || multiplier == null) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Mohon pilih warna wajib!")));
-        return;
+      messenger.showSnackBar(
+        const SnackBar(content: Text("Mohon pilih warna wajib!")),
+      );
+      return;
     }
     
-    String res = "";
-    String inputDetail = "";
+    if (color1 == 'Hitam') {
+      messenger.showSnackBar(
+        const SnackBar(
+          content: Text("Gelang 1 tidak boleh berwarna Hitam (tidak ada dalam teori resistor)"),
+          duration: Duration(seconds: 3),
+        ),
+      );
+      return;
+    }
+    
+    final defaultTolerance = tolerance ?? 'Emas';
+    final String res;
+    final String inputDetail;
     
     if (bands == 4) {
-      res = logic.calculate4Band(color1!, color2!, multiplier!, tolerance ?? 'Emas');
+      res = logic.calculate4Band(color1!, color2!, multiplier!, defaultTolerance);
       inputDetail = "4 Gelang: $color1, $color2, x$multiplier";
     } else {
-      res = logic.calculate5Band(color1!, color2!, color3 ?? 'Hitam', multiplier!, tolerance ?? 'Emas');
+      res = logic.calculate5Band(color1!, color2!, color3 ?? 'Hitam', multiplier!, defaultTolerance);
       inputDetail = "5 Gelang: $color1, $color2, $color3, x$multiplier";
     }
 
@@ -57,7 +72,10 @@ class _ResistorScreenState extends State<ResistorScreen> {
     });
 
     await DatabaseHelper.instance.insertHistory(HistoryModel(
-      type: "Resistor", input: inputDetail, result: res, timestamp: DateTime.now().toString()
+      type: "Resistor", 
+      input: inputDetail, 
+      result: res, 
+      timestamp: DateTime.now().toString(),
     ));
   }
 
@@ -116,7 +134,7 @@ class _ResistorScreenState extends State<ResistorScreen> {
             ),
             const SizedBox(height: 20),
 
-            _dropdown("Gelang 1 (Digit)", logic.digitColors.keys.toList(), color1, (v) => setState(() => color1 = v)),
+            _dropdown("Gelang 1 (Digit)", logic.digitColors.keys.where((c) => c != 'Hitam').toList(), color1, (v) => setState(() => color1 = v)),
             _dropdown("Gelang 2 (Digit)", logic.digitColors.keys.toList(), color2, (v) => setState(() => color2 = v)),
             if (bands == 5) _dropdown("Gelang 3 (Digit)", logic.digitColors.keys.toList(), color3, (v) => setState(() => color3 = v)),
             _dropdown("Gelang Pengali", logic.multipliers.keys.toList(), multiplier, (v) => setState(() => multiplier = v)),
@@ -205,7 +223,7 @@ class _ResistorScreenState extends State<ResistorScreen> {
     );
   }
 
-  Widget _dropdown(String label, List<String> items, String? val, Function(String?) onChanged) {
+  Widget _dropdown(String label, List<String> items, String? val, void Function(String?) onChanged) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
       child: DropdownButtonFormField<String>(
@@ -214,19 +232,27 @@ class _ResistorScreenState extends State<ResistorScreen> {
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
           contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
           filled: true,
-          fillColor: Colors.white
+          fillColor: Colors.white,
         ),
-        value: val,
+        initialValue: val,
         icon: Icon(Icons.arrow_drop_down_circle, color: Colors.red.shade300),
         items: items.map((e) => DropdownMenuItem(
-          value: e, 
+          value: e,
           child: Row(
             children: [
-              Container(width: 12, height: 12, decoration: BoxDecoration(color: _getColor(e), shape: BoxShape.circle, border: Border.all(color: Colors.grey.shade300))),
+              Container(
+                width: 12,
+                height: 12,
+                decoration: BoxDecoration(
+                  color: _getColor(e),
+                  shape: BoxShape.circle,
+                  border: Border.all(color: Colors.grey.shade300),
+                ),
+              ),
               const SizedBox(width: 10),
               Text(e),
             ],
-          )
+          ),
         )).toList(),
         onChanged: onChanged,
       ),

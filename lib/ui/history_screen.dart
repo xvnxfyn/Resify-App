@@ -25,12 +25,14 @@ class _HistoryScreenState extends State<HistoryScreen> {
             ),
             TextButton(
               onPressed: () async {
-                Navigator.of(ctx).pop();
+                final navigator = Navigator.of(ctx);
+                final scaffoldMessenger = ScaffoldMessenger.of(context);
+                navigator.pop();
                 await DatabaseHelper.instance.deleteAllHistory(); 
                 setState(() {}); // Refresh UI
                 
                 if (mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
+                  scaffoldMessenger.showSnackBar(
                     const SnackBar(content: Text("Riwayat berhasil dikosongkan")),
                   );
                 }
@@ -75,10 +77,30 @@ class _HistoryScreenState extends State<HistoryScreen> {
                         isThreeLine: true,
                         trailing: IconButton(
                           icon: const Icon(Icons.delete, color: Color.fromARGB(255, 223, 17, 17)),
-                          onPressed: () async {
-                            // Hapus satu item
-                            await DatabaseHelper.instance.deleteHistory(item.id!);
-                            setState(() {});
+                          onPressed: () {
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext ctx) {
+                                return AlertDialog(
+                                  title: const Text("Hapus Item?"),
+                                  content: const Text("Yakin ingin menghapus riwayat ini?"),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () => Navigator.of(ctx).pop(),
+                                      child: const Text("Tidak", style: TextStyle(color: Colors.grey)),
+                                    ),
+                                    TextButton(
+                                      onPressed: () async {
+                                        Navigator.of(ctx).pop();
+                                        await DatabaseHelper.instance.deleteHistory(item.id!);
+                                        setState(() {});
+                                      },
+                                      child: const Text("Ya, Hapus", style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold)),
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
                           },
                         ),
                       ),
@@ -96,7 +118,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
               color: Colors.white,
               boxShadow: [
                 BoxShadow(
-                  color: Colors.grey.withOpacity(0.2),
+                  color: Colors.grey.withValues(alpha: 0.2),
                   spreadRadius: 1,
                   blurRadius: 5,
                   offset: const Offset(0, -3),

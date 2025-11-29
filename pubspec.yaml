@@ -10,35 +10,36 @@ dependencies:
   flutter:
     sdk: flutter
 
-  # --- DEPENDENCIES (PUSTAKA) ---
+  
   cupertino_icons: ^1.0.2
-  google_fonts: ^6.1.0    # Biar font aplikasi bagus
-  sqflite: ^2.3.0         # Database Lokal (Wajib buat fitur History)
-  path: ^1.8.3            # Helper buat nyari lokasi database
-  intl: ^0.18.1           # Format Tanggal (Wajib buat fitur History)
-  # -----------------------------
+  google_fonts: ^6.1.0    
+  sqflite: ^2.3.0         
+  path: ^1.8.3            
+  intl: ^0.18.1           
+  
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^2.0.0
-  # Alat pembuat icon aplikasi (Settingan kamu sebelumnya)
   flutter_launcher_icons: ^0.13.1
 
-# --- KONFIGURASI ICON APLIKASI ---
+
 flutter_launcher_icons:
   android: "launcher_icon"
   ios: true
-  # Pastikan file resify_logo.png ada di folder ini
   image_path: "lib/assets/images/resify_logo.png"
   min_sdk_android: 21
 
-# --- KONFIGURASI FLUTTER & ASET ---
+
 flutter:
   uses-material-design: true
 
-  # Daftarkan folder aset gambar di sini
+  
   assets:
     - lib/assets/images/resify_logo.png
     - lib/assets/images/icon_resistor.png
     - lib/assets/images/icon_kalkulator.png
+    - lib/assets/images/maskot_1.png
+    - lib/assets/images/maskot_2.png
+    - lib/assets/images/maskot_3.png

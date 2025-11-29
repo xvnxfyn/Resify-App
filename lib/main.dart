@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-
-// Import semua halaman yang sudah kita buat di folder UI
-import 'ui/splash_screen.dart';
+import 'ui/splash_screen.dart'; 
 import 'ui/onboarding_screen.dart';
 import 'ui/home_screen.dart';
 import 'ui/resistor_screen.dart';
@@ -19,10 +17,10 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Resify', // Nama Aplikasi 
+      title: 'Resify', 
       debugShowCheckedModeBanner: false,
       
-      // --- TEMA APLIKASI ---
+      
       theme: ThemeData(
         useMaterial3: true,
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
@@ -33,20 +31,19 @@ class MyApp extends StatelessWidget {
           Theme.of(context).textTheme,
         ),
         
-        // Gaya AppBar
+        
         appBarTheme: const AppBarTheme(
           backgroundColor: Colors.white,
-          foregroundColor: Colors.black, // Warna teks judul hitam
-          elevation: 0, // Tidak ada bayangan
+          foregroundColor: Colors.black, 
+          elevation: 0, 
           centerTitle: true,
         ),
       ),
 
-      // --- PENGATURAN RUTE (NAVIGASI) ---
-      // Aplikasi dimulai dari Splash Screen ('/')
+      
       initialRoute: '/',
       
-      // Daftar alamat halaman aplikasi kita
+      
       routes: {
         '/': (context) => const SplashScreen(),
         '/onboarding': (context) => const OnboardingScreen(),
