@@ -1,11 +1,17 @@
 class HistoryModel {
   final int? id;
-  final String type; 
-  final String input; 
-  final String result; 
-  final String timestamp;
+  final String type; // "Resistor" atau "Ohm Law"
+  final String input; // Detail input
+  final String result; // Hasil hitungan
+  final String timestamp; // Waktu
 
-  HistoryModel({this.id, required this.type, required this.input, required this.result, required this.timestamp});
+  HistoryModel({
+    this.id, 
+    required this.type, 
+    required this.input, 
+    required this.result, 
+    required this.timestamp
+  });
 
   Map<String, dynamic> toMap() {
     return {

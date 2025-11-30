@@ -1,5 +1,4 @@
 class ResistorLogic {
-  // Data Warna
   final Map<String, int> digitColors = {
     'Hitam': 0, 'Cokelat': 1, 'Merah': 2, 'Oranye': 3, 'Kuning': 4,
     'Hijau': 5, 'Biru': 6, 'Ungu': 7, 'Abu-abu': 8, 'Putih': 9
@@ -22,7 +21,7 @@ class ResistorLogic {
     String t = tolerances[tol] ?? '';
 
     double result = ((v1 * 10) + v2) * m;
-    return "${formatResult(result)} Ω $t";
+    return "${_formatResult(result)} Ω $t";
   }
 
   String calculate5Band(String b1, String b2, String b3, String mul, String tol) {
@@ -33,10 +32,10 @@ class ResistorLogic {
     String t = tolerances[tol] ?? '';
 
     double result = ((v1 * 100) + (v2 * 10) + v3) * m;
-    return "${formatResult(result)} Ω $t";
+    return "${_formatResult(result)} Ω $t";
   }
 
-  String formatResult(double val) {
+  String _formatResult(double val) {
     if (val >= 1000000) return "${(val / 1000000).toStringAsFixed(2)} M";
     if (val >= 1000) return "${(val / 1000).toStringAsFixed(2)} k";
     return val.toStringAsFixed(2);

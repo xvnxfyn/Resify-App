@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'ui/splash_screen.dart'; 
+import 'ui/splash_screen.dart';
 import 'ui/onboarding_screen.dart';
 import 'ui/home_screen.dart';
 import 'ui/resistor_screen.dart';
@@ -17,33 +17,14 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Resify', 
+      title: 'Resify',
       debugShowCheckedModeBanner: false,
-      
-      
       theme: ThemeData(
         useMaterial3: true,
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
-        scaffoldBackgroundColor: Colors.white, 
-        
-        
-        textTheme: GoogleFonts.albertSansTextTheme(
-          Theme.of(context).textTheme,
-        ),
-        
-        
-        appBarTheme: const AppBarTheme(
-          backgroundColor: Colors.white,
-          foregroundColor: Colors.black, 
-          elevation: 0, 
-          centerTitle: true,
-        ),
+        textTheme: GoogleFonts.poppinsTextTheme(),
       ),
-
-      
       initialRoute: '/',
-      
-      
       routes: {
         '/': (context) => const SplashScreen(),
         '/onboarding': (context) => const OnboardingScreen(),

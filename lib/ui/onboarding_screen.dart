@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
@@ -18,13 +19,13 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     },
     {
       "image": "lib/assets/images/maskot_2.png",
-      "title": "Baca Resistor Seketika",
-      "desc": "Pilih warna gelang, nilai resistansi muncul otomatis."
+      "title": "Baca Kode Resistor Seketika",
+      "desc": "Visualisasi gelang warna yang memudahkan pembacaan resistor."
     },
     {
       "image": "lib/assets/images/maskot_3.png",
       "title": "Praktis untuk Belajar",
-      "desc": "Alat bantu kecil yang pas buat tugas lab dan rangkaian."
+      "desc": "Teman setia mahasiswa teknik untuk tugas dan praktikum."
     },
   ];
 
@@ -46,9 +47,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     children: [
                       Image.asset(_pages[index]["image"]!, height: 250),
                       const SizedBox(height: 32),
-                      Text(_pages[index]["title"]!, style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold), textAlign: TextAlign.center),
+                      Text(_pages[index]["title"]!, style: GoogleFonts.poppins(fontSize: 22, fontWeight: FontWeight.bold), textAlign: TextAlign.center),
                       const SizedBox(height: 16),
-                      Text(_pages[index]["desc"]!, textAlign: TextAlign.center, style: TextStyle(color: Colors.grey[600])),
+                      Text(_pages[index]["desc"]!, textAlign: TextAlign.center, style: TextStyle(color: Colors.grey[600], fontSize: 14)),
                     ],
                   ),
                 );
@@ -57,20 +58,21 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           ),
           Padding(
             padding: const EdgeInsets.all(24.0),
-            child: SizedBox(
-              width: double.infinity,
-              height: 50,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(backgroundColor: Colors.brown, foregroundColor: Colors.white),
-                onPressed: () {
-                  if (_currentPage == _pages.length - 1) {
-                    Navigator.pushReplacementNamed(context, '/home');
-                  } else {
-                    _controller.nextPage(duration: const Duration(milliseconds: 300), curve: Curves.ease);
-                  }
-                },
-                child: Text(_currentPage == _pages.length - 1 ? "Mulai Sekarang" : "Next"),
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.blue[800], 
+                foregroundColor: Colors.white,
+                minimumSize: const Size(double.infinity, 50),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))
               ),
+              onPressed: () {
+                if (_currentPage == _pages.length - 1) {
+                  Navigator.pushReplacementNamed(context, '/home');
+                } else {
+                  _controller.nextPage(duration: const Duration(milliseconds: 300), curve: Curves.ease);
+                }
+              },
+              child: Text(_currentPage == _pages.length - 1 ? "Mulai Sekarang" : "Lanjut"),
             ),
           )
         ],

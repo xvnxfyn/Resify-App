@@ -10,19 +10,13 @@ class DatabaseHelper {
 
   Future<Database> get database async {
     if (_database != null) return _database!;
-    _database = await _initDB('resify.db');
+    _database = await _initDB('resify_final.db');
     return _database!;
   }
-
-  Future<int> deleteAllHistory() async {
-    Database db = await instance.database;
-    return await db.delete('history');
-}
 
   Future<Database> _initDB(String filePath) async {
     final dbPath = await getDatabasesPath();
     final path = join(dbPath, filePath);
-
     return await openDatabase(path, version: 1, onCreate: _createDB);
   }
 
@@ -45,6 +39,7 @@ class DatabaseHelper {
 
   Future<List<HistoryModel>> getAllHistory() async {
     final db = await instance.database;
+    // Urutkan dari yang terbaru (DESC)
     final result = await db.query('history', orderBy: 'timestamp DESC');
     return result.map((json) => HistoryModel.fromMap(json)).toList();
   }
@@ -52,5 +47,10 @@ class DatabaseHelper {
   Future<int> deleteHistory(int id) async {
     final db = await instance.database;
     return await db.delete('history', where: 'id = ?', whereArgs: [id]);
+  }
+  
+  Future<int> deleteAllHistory() async {
+    final db = await instance.database;
+    return await db.delete('history');
   }
 }
