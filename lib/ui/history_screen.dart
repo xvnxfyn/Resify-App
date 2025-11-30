@@ -67,12 +67,20 @@ class _HistoryScreenState extends State<HistoryScreen> {
                     return Card(
                       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                       child: ListTile(
-                        leading: Icon(
-                          item.type == "Resistor" ? Icons.code : Icons.bolt,
-                          color: item.type == "Resistor" ? Colors.red : Colors.blue,
-                        ),
+                        leading: item.type == "Resistor" 
+                          ? Image.asset(
+                              'lib/assets/images/icon_resistor.png',
+                              width: 32,
+                              height: 32,
+                              color: Colors.red.shade600,
+                            )
+                          : Image.asset(
+                              'lib/assets/images/icon_kalkulator.png',
+                              width: 32,
+                              height: 32,
+                              color: Colors.blue.shade700,
+                            ),
                         title: Text(item.result, style: const TextStyle(fontWeight: FontWeight.bold)),
-                        // Kembali ke tampilan original (tanpa format macam-macam)
                         subtitle: Text("${item.input}\n${item.timestamp.substring(0, 16)}"),
                         isThreeLine: true,
                         trailing: IconButton(

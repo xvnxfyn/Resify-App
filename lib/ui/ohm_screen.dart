@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../logic/ohm_logic.dart';
+import '../database/database_helper.dart';
+import '../models/history_model.dart';
 
 class OhmScreen extends StatefulWidget {
   const OhmScreen({super.key});
@@ -10,123 +12,156 @@ class OhmScreen extends StatefulWidget {
 }
 
 class _OhmScreenState extends State<OhmScreen> {
-  final OhmLogic logic = OhmLogic();
+  final OhmLogic _logic = OhmLogic();
   
-  
-  String targetMode = 'V'; 
+  String _targetMode = 'V';
 
-  
-  final Map<String, List<String>> inputFields = {
-    'V': ['Arus (I) - Ampere', 'Hambatan (R) - Ohm'],
-    'I': ['Tegangan (V) - Volt', 'Hambatan (R) - Ohm'],
-    'R': ['Tegangan (V) - Volt', 'Arus (I) - Ampere'],
-    'P': ['Tegangan (V) - Volt', 'Arus (I) - Ampere'],
+  static const Map<String, Map<String, dynamic>> _modeConfig = {
+    'V': {
+      'label': 'Tegangan',
+      'icon': Icons.bolt,
+      'unit': 'V',
+      'color': Colors.orange,
+      'title': 'Menghitung Tegangan (V)',
+      'formula': 'Rumus: V = I × R (Volt = Ampere × Ohm)',
+      'inputs': ['Arus (I) - Ampere', 'Hambatan (R) - Ohm'],
+    },
+    'I': {
+      'label': 'Arus',
+      'icon': Icons.flash_on,
+      'unit': 'A',
+      'color': Colors.purple,
+      'title': 'Menghitung Arus (I)',
+      'formula': 'Rumus: I = V ÷ R (Ampere = Volt ÷ Ohm)',
+      'inputs': ['Tegangan (V) - Volt', 'Hambatan (R) - Ohm'],
+    },
+    'R': {
+      'label': 'Hambatan',
+      'icon': Icons.settings_input_component,
+      'unit': 'Ω',
+      'color': Colors.green,
+      'title': 'Menghitung Hambatan (R)',
+      'formula': 'Rumus: R = V ÷ I (Ohm = Volt ÷ Ampere)',
+      'inputs': ['Tegangan (V) - Volt', 'Arus (I) - Ampere'],
+    },
+    'P': {
+      'label': 'Daya',
+      'icon': Icons.power,
+      'unit': 'W',
+      'color': Colors.red,
+      'title': 'Menghitung Daya (P)',
+      'formula': 'Rumus: P = V × I (Watt = Volt × Ampere)',
+      'inputs': ['Tegangan (V) - Volt', 'Arus (I) - Ampere'],
+    },
   };
 
-  
-  final TextEditingController c1 = TextEditingController();
-  final TextEditingController c2 = TextEditingController();
+  final TextEditingController _controller1 = TextEditingController();
+  final TextEditingController _controller2 = TextEditingController();
 
-  
-  String result = '';
-  bool hasCalculated = false;
+  String _result = '';
+  bool _hasCalculated = false;
 
   @override
   void dispose() {
-    c1.dispose();
-    c2.dispose();
+    _controller1.dispose();
+    _controller2.dispose();
     super.dispose();
   }
 
-  
   void _calculate() {
-    final val1 = double.tryParse(c1.text);
-    final val2 = double.tryParse(c2.text);
+    final val1 = double.tryParse(_controller1.text);
+    final val2 = double.tryParse(_controller2.text);
 
-    // Validasi input kosong atau tidak valid
     if (val1 == null || val2 == null) {
       _setResult('Input tidak valid - masukkan angka yang benar');
       return;
     }
 
-    // Validasi angka negatif
     if (val1 < 0 || val2 < 0) {
       _setResult('Input tidak boleh negatif');
       return;
     }
 
-    // Validasi angka terlalu besar (overflow prevention)
     if (val1 > 1e15 || val2 > 1e15) {
       _setResult('Input terlalu besar - maksimal 10^15');
       return;
     }
 
-    // Validasi angka terlalu kecil tapi bukan nol
     if ((val1 != 0 && val1 < 1e-10) || (val2 != 0 && val2 < 1e-10)) {
       _setResult('Input terlalu kecil - minimal 10^-10');
       return;
     }
 
-    String calculatedResult;
-    String formula;
+    final String calculatedResult;
+    final String formula;
+    final String inputText;
 
-    switch (targetMode) {
+    switch (_targetMode) {
       case 'V':
-        calculatedResult = logic.hitungTegangan(val1, val2);
+        calculatedResult = _logic.hitungTegangan(val1, val2);
         formula = 'V = I × R = $val1 × $val2';
-        break;
+        inputText = 'I=$val1 A, R=$val2 Ω';
       case 'I':
         if (val2 == 0) {
           _setResult('Hambatan tidak boleh nol');
           return;
         }
-        calculatedResult = logic.hitungArus(val1, val2);
+        calculatedResult = _logic.hitungArus(val1, val2);
         formula = 'I = V ÷ R = $val1 ÷ $val2';
-        break;
+        inputText = 'V=$val1 V, R=$val2 Ω';
       case 'R':
         if (val2 == 0) {
           _setResult('Arus tidak boleh nol');
           return;
         }
-        calculatedResult = logic.hitungHambatan(val1, val2);
+        calculatedResult = _logic.hitungHambatan(val1, val2);
         formula = 'R = V ÷ I = $val1 ÷ $val2';
-        break;
+        inputText = 'V=$val1 V, I=$val2 A';
       case 'P':
-        calculatedResult = logic.hitungDaya(val1, val2);
+        calculatedResult = _logic.hitungDaya(val1, val2);
         formula = 'P = V × I = $val1 × $val2';
-        break;
+        inputText = 'V=$val1 V, I=$val2 A';
       default:
         return;
     }
 
     _setResult('$formula\n\nHasil: $calculatedResult');
+    _saveToHistory(inputText, calculatedResult);
   }
 
   void _setResult(String value) {
     setState(() {
-      result = value;
-      hasCalculated = true;
+      _result = value;
+      _hasCalculated = true;
     });
   }
 
-  
+  Future<void> _saveToHistory(String input, String result) async {
+    final history = HistoryModel(
+      type: 'Hukum Ohm',
+      input: input,
+      result: result,
+      timestamp: DateTime.now().toString(),
+    );
+    await DatabaseHelper.instance.insertHistory(history);
+  }
+
   void _reset() {
     setState(() {
-      c1.clear();
-      c2.clear();
-      result = '';
-      hasCalculated = false;
+      _controller1.clear();
+      _controller2.clear();
+      _result = '';
+      _hasCalculated = false;
     });
   }
 
-  
   void _changeMode(String mode) {
     setState(() {
-      targetMode = mode;
-      c1.clear();
-      c2.clear();
-      result = '';
-      hasCalculated = false;
+      _targetMode = mode;
+      _controller1.clear();
+      _controller2.clear();
+      _result = '';
+      _hasCalculated = false;
     });
   }
 
@@ -145,7 +180,6 @@ class _OhmScreenState extends State<OhmScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            
             const Text(
               'Pilih Mode Perhitungan',
               style: TextStyle(
@@ -157,23 +191,22 @@ class _OhmScreenState extends State<OhmScreen> {
             const SizedBox(height: 12),
             Row(
               children: [
-                Expanded(child: _modeButton('V', 'Tegangan')),
+                Expanded(child: _modeButton('V')),
                 const SizedBox(width: 10),
-                Expanded(child: _modeButton('I', 'Arus')),
+                Expanded(child: _modeButton('I')),
               ],
             ),
             const SizedBox(height: 10),
             Row(
               children: [
-                Expanded(child: _modeButton('R', 'Hambatan')),
+                Expanded(child: _modeButton('R')),
                 const SizedBox(width: 10),
-                Expanded(child: _modeButton('P', 'Daya')),
+                Expanded(child: _modeButton('P')),
               ],
             ),
 
             const SizedBox(height: 24),
 
-            
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
@@ -189,7 +222,7 @@ class _OhmScreenState extends State<OhmScreen> {
                       Icon(Icons.info_outline, color: Colors.blue.shade700, size: 20),
                       const SizedBox(width: 8),
                       Text(
-                        _getModeTitle(),
+                        _modeConfig[_targetMode]!['title'] as String,
                         style: TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.bold,
@@ -200,7 +233,7 @@ class _OhmScreenState extends State<OhmScreen> {
                   ),
                   const SizedBox(height: 6),
                   Text(
-                    _getModeFormula(),
+                    _modeConfig[_targetMode]!['formula'] as String,
                     style: TextStyle(
                       fontSize: 13,
                       color: Colors.grey.shade700,
@@ -212,10 +245,9 @@ class _OhmScreenState extends State<OhmScreen> {
 
             const SizedBox(height: 24),
 
-            
-            _inputBox(inputFields[targetMode]![0], c1),
+            _inputBox((_modeConfig[_targetMode]!['inputs'] as List)[0], _controller1),
             const SizedBox(height: 16),
-            _inputBox(inputFields[targetMode]![1], c2),
+            _inputBox((_modeConfig[_targetMode]!['inputs'] as List)[1], _controller2),
 
             const SizedBox(height: 24),
 
@@ -271,8 +303,7 @@ class _OhmScreenState extends State<OhmScreen> {
 
             const SizedBox(height: 24),
 
-           
-            if (hasCalculated)
+            if (_hasCalculated)
               AnimatedContainer(
                 duration: const Duration(milliseconds: 300),
                 padding: const EdgeInsets.all(20),
@@ -313,7 +344,7 @@ class _OhmScreenState extends State<OhmScreen> {
                     const Divider(),
                     const SizedBox(height: 8),
                     Text(
-                      result,
+                      _result,
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
@@ -325,7 +356,7 @@ class _OhmScreenState extends State<OhmScreen> {
                     const SizedBox(height: 12),
                     ElevatedButton.icon(
                       onPressed: () {
-                        Clipboard.setData(ClipboardData(text: result));
+                        Clipboard.setData(ClipboardData(text: _result));
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
                             content: Text('Hasil berhasil disalin ke clipboard'),
@@ -355,14 +386,15 @@ class _OhmScreenState extends State<OhmScreen> {
     );
   }
 
-  
-  Widget _modeButton(String mode, String label) {
-    final isSelected = targetMode == mode;
+  Widget _modeButton(String mode) {
+    final isSelected = _targetMode == mode;
+    final config = _modeConfig[mode]!;
+    
     return InkWell(
       onTap: () => _changeMode(mode),
       borderRadius: BorderRadius.circular(12),
       child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 14),
+        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
         decoration: BoxDecoration(
           color: isSelected ? Colors.blue : Colors.white,
           borderRadius: BorderRadius.circular(12),
@@ -381,18 +413,19 @@ class _OhmScreenState extends State<OhmScreen> {
               : [],
         ),
         child: Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              mode,
+              config['unit'] as String,
               style: TextStyle(
-                fontSize: 20,
+                fontSize: 28,
                 fontWeight: FontWeight.bold,
                 color: isSelected ? Colors.white : Colors.blue,
               ),
             ),
-            const SizedBox(height: 4),
+            const SizedBox(height: 6),
             Text(
-              label,
+              config['label'] as String,
               style: TextStyle(
                 fontSize: 12,
                 fontWeight: FontWeight.w500,
@@ -445,37 +478,5 @@ class _OhmScreenState extends State<OhmScreen> {
         ),
       ],
     );
-  }
-
-  
-  String _getModeTitle() {
-    switch (targetMode) {
-      case 'V':
-        return 'Menghitung Tegangan (V)';
-      case 'I':
-        return 'Menghitung Arus (I)';
-      case 'R':
-        return 'Menghitung Hambatan (R)';
-      case 'P':
-        return 'Menghitung Daya (P)';
-      default:
-        return '';
-    }
-  }
-
-  
-  String _getModeFormula() {
-    switch (targetMode) {
-      case 'V':
-        return 'Rumus: V = I × R (Volt = Ampere × Ohm)';
-      case 'I':
-        return 'Rumus: I = V ÷ R (Ampere = Volt ÷ Ohm)';
-      case 'R':
-        return 'Rumus: R = V ÷ I (Ohm = Volt ÷ Ampere)';
-      case 'P':
-        return 'Rumus: P = V × I (Watt = Volt × Ampere)';
-      default:
-        return '';
-    }
   }
 }

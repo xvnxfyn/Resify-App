@@ -20,7 +20,7 @@ class HomeScreen extends StatelessWidget {
               
               _buildMenuButton(
                 context, 
-                "Hitung Resistor (Gelang)", 
+                "Hitung Resistor", 
                 Colors.red.shade600, 
                 "lib/assets/images/icon_resistor.png", 
                 '/resistor'
@@ -28,7 +28,7 @@ class HomeScreen extends StatelessWidget {
               const SizedBox(height: 16),
               _buildMenuButton(
                 context, 
-                "Hukum Ohm (V=I.R)", 
+                "Hukum Ohm", 
                 Colors.blue.shade700, 
                 "lib/assets/images/icon_kalkulator.png", 
                 '/ohm'
