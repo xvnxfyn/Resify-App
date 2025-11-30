@@ -58,7 +58,7 @@ class HomeScreen extends StatelessWidget {
       style: ElevatedButton.styleFrom(
         backgroundColor: color,
         foregroundColor: Colors.white,
-        minimumSize: const Size(double.infinity, 65), // Tombol lebih tinggi sedikit
+        minimumSize: const Size(double.infinity, 65), 
         elevation: 3,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
       ),
@@ -66,7 +66,7 @@ class HomeScreen extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          // UKURAN ICON DIPERBESAR JADI 32
+          
           Image.asset(iconPath, width: 32, height: 32, color: Colors.white), 
           const SizedBox(width: 16), 
           Text(title, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold))

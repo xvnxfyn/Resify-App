@@ -10,7 +10,7 @@ class HistoryScreen extends StatefulWidget {
 
 class _HistoryScreenState extends State<HistoryScreen> {
   
-// Fungsi Pop-up Konfirmasi Hapus Semua
+
   void _showDeleteConfirmation(BuildContext context) {
     showDialog(
       context: context,
@@ -29,7 +29,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                 final scaffoldMessenger = ScaffoldMessenger.of(context);
                 navigator.pop();
                 await DatabaseHelper.instance.deleteAllHistory(); 
-                setState(() {}); // Refresh UI
+                setState(() {}); 
                 
                 if (mounted) {
                   scaffoldMessenger.showSnackBar(

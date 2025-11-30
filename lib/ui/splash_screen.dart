@@ -40,7 +40,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Image.asset('lib/assets/images/resify_logo.png', width: 160), // Ukuran logo sedikit diperbesar
+              Image.asset('lib/assets/images/resify_logo.png', width: 160), 
               const SizedBox(height: 24),
               const CircularProgressIndicator(color: Colors.orange),
               const SizedBox(height: 20),

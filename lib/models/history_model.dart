@@ -1,8 +1,8 @@
 class HistoryModel {
   final int? id;
-  final String type; // "Resistor" atau "Ohm"
-  final String input; // Detail input (misal: "Merah, Merah, Coklat")
-  final String result; // Hasil (misal: "220 Ohm")
+  final String type; 
+  final String input; 
+  final String result; 
   final String timestamp;
 
   HistoryModel({this.id, required this.type, required this.input, required this.result, required this.timestamp});
