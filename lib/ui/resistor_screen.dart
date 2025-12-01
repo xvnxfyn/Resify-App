@@ -232,7 +232,7 @@ class _ResistorScreenState extends State<ResistorScreen> {
                           const Row(mainAxisSize: MainAxisSize.min, children: [
                         Icon(Icons.copy, size: 12, color: Colors.white),
                         SizedBox(width: 4),
-                        Text("Salin",
+                        Text("Salin Hasil",
                             style: TextStyle(color: Colors.white, fontSize: 10))
                       ]),
                     ),

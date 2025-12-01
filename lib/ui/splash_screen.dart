@@ -42,11 +42,11 @@ class _SplashScreenState extends State<SplashScreen>
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Image.asset('lib/assets/images/resify_logo.png', width: 180),
+              Image.asset('lib/assets/images/resify_logo.png', width: 220),
               const SizedBox(height: 24),
-              Text("Resify",
+              Text("ResiFy",
                   style: GoogleFonts.poppins(
-                      fontSize: 28,
+                      fontSize: 32,
                       fontWeight: FontWeight.bold,
                       color: AppColors.primary)),
               const SizedBox(height: 30),
