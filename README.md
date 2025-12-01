@@ -1,16 +1,32 @@
-# resify
+# ⚡ ResiFy - Smart Engineering Calculator
 
-A new Flutter project.
+ResiFy adalah aplikasi kalkulator teknik modern yang dirancang untuk membantu mahasiswa Teknik Komputer/Elektro menghitung kode warna resistor dan Hukum Ohm dengan cepat, akurat, dan praktis.
 
-## Getting Started
+<img src="lib/assets/images/resify_logo.png" width="150" />
 
-This project is a starting point for a Flutter application.
+## 📱 Fitur Utama
 
-A few resources to get you started if this is your first Flutter project:
+✅ **Kalkulator Resistor:**
+* Mendukung 4 Gelang & 5 Gelang.
+* Visualisasi resistor real-time (warna berubah sesuai pilihan).
+* Hasil perhitungan presisi dengan toleransi.
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+✅ **Kalkulator Hukum Ohm:**
+* Hitung Tegangan (V), Arus (I), Hambatan (R), dan Daya (P).
+* Input dinamis dan validasi otomatis.
+* Tampilan rumus yang digunakan.
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+✅ **Riwayat Perhitungan (Database Local):**
+* Menyimpan otomatis setiap hasil perhitungan.
+* Data tersimpan permanen di HP (menggunakan SQLite).
+* Fitur salin hasil (Copy to Clipboard) dan hapus riwayat.
+
+## 🛠️ Teknologi yang Digunakan
+
+* **Framework:** Flutter (Dart)
+* **Database:** SQLite (sqflite)
+* **UI/UX:** Modern Clean Design, Google Fonts (Poppins), Custom Assets.
+* **Architecture:** Modular folder structure (UI, Logic, Data split).
+
+---
+*Dibuat untuk memenuhi Tugas Besar & Rekrutmen Research Assistant Laboratory 2025.*

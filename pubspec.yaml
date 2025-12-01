@@ -30,6 +30,9 @@ flutter_launcher_icons:
   ios: true
   image_path: "lib/assets/images/resify_logo.png"
   min_sdk_android: 21
+  # TAMBAHAN KHUSUS BIAR GEDE:
+  #adaptive_icon_background: "#FFFFFF" # Warna Background Putih
+  #adaptive_icon_foreground: "lib/assets/images/resify_logo.png" # Logo di depan
 
 
 flutter:

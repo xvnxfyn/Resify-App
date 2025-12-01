@@ -15,7 +15,7 @@ class HomeScreen extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Image.asset('lib/assets/images/resify_logo.png', width: 190),
+              Image.asset('lib/assets/images/resify_logo.png', width: 180),
               const SizedBox(height: 40),
               Text("Pilih Fitur Kalkulator",
                   style: GoogleFonts.poppins(
