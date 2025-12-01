@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'app_colors.dart';
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
@@ -15,7 +16,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     {
       "image": "lib/assets/images/icon_thunderblue.png",
       "title": "Hitung Hukum Ohm Instan",
-      "desc": "Pilih variabel, masukkan nilai, hasil muncul otomatis."
+      "desc": "Pilih variabelnya, hasil muncul otomatis"
     },
     {
       "image": "lib/assets/images/icon_resistorblue.png",
@@ -32,7 +33,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.background,
       body: Column(
         children: [
           Expanded(
@@ -46,33 +47,50 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Image.asset(_pages[index]["image"]!, height: 220),
+                      Image.asset(_pages[index]["image"]!, height: 250),
                       const SizedBox(height: 40),
                       Text(_pages[index]["title"]!,
                           style: GoogleFonts.poppins(
-                              fontSize: 22, fontWeight: FontWeight.bold),
+                              fontSize: 22,
+                              fontWeight: FontWeight.bold,
+                              color: AppColors.textDark),
                           textAlign: TextAlign.center),
                       const SizedBox(height: 12),
                       Text(_pages[index]["desc"]!,
                           textAlign: TextAlign.center,
-                          style:
-                              TextStyle(color: Colors.grey[600], fontSize: 14)),
+                          style: TextStyle(
+                              color: AppColors.textGrey, fontSize: 14)),
                     ],
                   ),
                 );
               },
             ),
           ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: List.generate(
+                _pages.length,
+                (index) => Container(
+                      margin: const EdgeInsets.symmetric(horizontal: 4),
+                      width: _currentPage == index ? 8 : 6,
+                      height: _currentPage == index ? 8 : 6,
+                      decoration: BoxDecoration(
+                          color: _currentPage == index
+                              ? AppColors.primary
+                              : Colors.grey.shade300,
+                          shape: BoxShape.circle),
+                    )),
+          ),
+          const SizedBox(height: 24),
           Padding(
             padding: const EdgeInsets.all(24.0),
             child: ElevatedButton(
               style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF00A9FF),
+                  backgroundColor: AppColors.primary,
                   foregroundColor: Colors.white,
                   minimumSize: const Size(double.infinity, 55),
                   shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30)),
-                  elevation: 0),
+                      borderRadius: BorderRadius.circular(12))),
               onPressed: () {
                 if (_currentPage == _pages.length - 1) {
                   Navigator.pushReplacementNamed(context, '/home');

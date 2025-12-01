@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter/services.dart';
 import '../logic/ohm_logic.dart';
 import '../database/database_helper.dart';
 import '../models/history_model.dart';
+import 'app_colors.dart';
 
 class OhmScreen extends StatefulWidget {
   const OhmScreen({super.key});
@@ -11,51 +12,85 @@ class OhmScreen extends StatefulWidget {
 }
 
 class _OhmScreenState extends State<OhmScreen> {
-  final OhmLogic logic = OhmLogic();
-  String mode = "Tegangan";
-  final TextEditingController c1 = TextEditingController();
-  final TextEditingController c2 = TextEditingController();
-  String result = "0.00";
-  bool done = false;
+  final OhmCalculator _calculator = OhmCalculator();
 
-  void _calc() async {
-    if (c1.text.isEmpty || c2.text.isEmpty) return;
-    double v1 = double.tryParse(c1.text) ?? 0;
-    double v2 = double.tryParse(c2.text) ?? 0;
+  // State
+  String _selectedMode = "Tegangan";
+  final TextEditingController _inputCtrl1 = TextEditingController();
+  final TextEditingController _inputCtrl2 = TextEditingController();
+
+  String _result = "0.00";
+  String _formulaDisplay = "";
+  bool _hasResult = false;
+
+  @override
+  void dispose() {
+    _inputCtrl1.dispose();
+    _inputCtrl2.dispose();
+    super.dispose();
+  }
+
+  void _calculate() async {
+    if (_inputCtrl1.text.isEmpty || _inputCtrl2.text.isEmpty) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text("Mohon isi kedua nilai")));
+      return;
+    }
+
+    double val1 = double.tryParse(_inputCtrl1.text) ?? 0;
+    double val2 = double.tryParse(_inputCtrl2.text) ?? 0;
     String res = "";
-    if (mode == "Tegangan")
-      res = logic.hitungTegangan(v1, v2);
-    else if (mode == "Arus")
-      res = logic.hitungArus(v1, v2);
-    else if (mode == "Hambatan")
-      res = logic.hitungHambatan(v1, v2);
-    else
-      res = logic.hitungDaya(v1, v2);
+
+    switch (_selectedMode) {
+      case "Tegangan":
+        res = _calculator.hitungTegangan(arus: val1, hambatan: val2);
+        _formulaDisplay = "V = I × R";
+        break;
+      case "Arus":
+        res = _calculator.hitungArus(tegangan: val1, hambatan: val2);
+        _formulaDisplay = "I = V ÷ R";
+        break;
+      case "Hambatan":
+        res = _calculator.hitungHambatan(tegangan: val1, arus: val2);
+        _formulaDisplay = "R = V ÷ I";
+        break;
+      case "Daya":
+        res = _calculator.hitungDaya(tegangan: val1, arus: val2);
+        _formulaDisplay = "P = V × I";
+        break;
+    }
 
     setState(() {
-      result = res;
-      done = true;
+      _result = res;
+      _hasResult = true;
     });
+
     await DatabaseHelper.instance.insertHistory(HistoryModel(
         type: "Ohm Law",
-        input: "Mode: $mode",
+        input: "$_selectedMode ($val1, $val2)",
         result: res,
         timestamp: DateTime.now().toString()));
-    FocusScope.of(context).unfocus();
+
+    if (mounted) FocusScope.of(context).unfocus();
   }
 
   void _reset() {
     setState(() {
-      c1.clear();
-      c2.clear();
-      result = "0.00";
-      done = false;
+      _inputCtrl1.clear();
+      _inputCtrl2.clear();
+      _result = "0.00";
+      _hasResult = false;
     });
   }
 
-  String _lbl1() => mode == "Tegangan" ? "Arus (I)" : "Tegangan (V)";
-  String _lbl2() =>
-      (mode == "Tegangan" || mode == "Arus") ? "Hambatan (R)" : "Arus (I)";
+  // Label Dinamis
+  String get _label1 =>
+      _selectedMode == "Tegangan" ? "Arus (I) - Ampere" : "Tegangan (V) - Volt";
+  String get _label2 {
+    if (_selectedMode == "Tegangan" || _selectedMode == "Arus")
+      return "Hambatan (R) - Ohm";
+    return "Arus (I) - Ampere";
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -66,95 +101,170 @@ class _OhmScreenState extends State<OhmScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Wrap(
-                spacing: 10,
-                runSpacing: 10,
-                alignment: WrapAlignment.center,
-                children: ["Tegangan", "Arus", "Hambatan", "Daya"]
-                    .map((m) => _chip(m))
-                    .toList()),
-            const SizedBox(height: 20),
-            Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                    color: Colors.blue[50],
-                    borderRadius: BorderRadius.circular(8)),
-                child: Text("Menghitung $mode...",
-                    style: TextStyle(color: Colors.blue[800]))),
-            const SizedBox(height: 20),
-            _inp(c1, _lbl1()),
+            const Text("Pilih Mode Perhitungan",
+                style: TextStyle(fontWeight: FontWeight.w500)),
             const SizedBox(height: 12),
-            _inp(c2, _lbl2()),
-            const SizedBox(height: 20),
+
+            // Grid Menu
+            GridView.count(
+              crossAxisCount: 2,
+              shrinkWrap: true,
+              childAspectRatio: 1.6,
+              mainAxisSpacing: 12,
+              crossAxisSpacing: 12,
+              physics: const NeverScrollableScrollPhysics(),
+              children: [
+                _buildModeCard("V", "Tegangan"),
+                _buildModeCard("A", "Arus"),
+                _buildModeCard("Ω", "Hambatan"),
+                _buildModeCard("W", "Daya"),
+              ],
+            ),
+
+            const SizedBox(height: 24),
+            _buildInput(_inputCtrl1, _label1),
+            const SizedBox(height: 16),
+            _buildInput(_inputCtrl2, _label2),
+
+            const SizedBox(height: 32),
+
             Row(children: [
               Expanded(
                   child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF00A9FF),
+                          backgroundColor: AppColors.primary,
                           foregroundColor: Colors.white,
-                          minimumSize: const Size.fromHeight(50),
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(25))),
-                      onPressed: _calc,
-                      child: const Text("Hitung"))),
-              const SizedBox(width: 10),
+                          minimumSize: const Size.fromHeight(50)),
+                      onPressed: _calculate,
+                      child: const Text("Hitung",
+                          style: TextStyle(fontWeight: FontWeight.bold)))),
+              const SizedBox(width: 12),
               Expanded(
                   child: OutlinedButton(
                       style: OutlinedButton.styleFrom(
                           minimumSize: const Size.fromHeight(50),
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(25))),
+                          side: const BorderSide(color: Colors.grey)),
                       onPressed: _reset,
-                      child: const Text("Reset"))),
+                      child: const Text("Reset",
+                          style: TextStyle(color: Colors.grey)))),
             ]),
-            const SizedBox(height: 20),
-            if (done)
-              Container(
-                padding: const EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                    color: const Color(0xFFC8E6C9),
-                    borderRadius: BorderRadius.circular(16)),
-                child: Column(children: [
-                  Text("Hasil Perhitungan:",
-                      style: TextStyle(color: Colors.green[800])),
-                  Text(result,
-                      style: GoogleFonts.poppins(
-                          fontSize: 32,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.green[900])),
-                ]),
-              )
+
+            const SizedBox(height: 24),
+
+            if (_hasResult) _buildResultCard()
           ],
         ),
       ),
     );
   }
 
-  Widget _chip(String m) {
-    bool sel = mode == m;
-    return ChoiceChip(
-        label: Text(m),
-        selected: sel,
-        onSelected: (v) => setState(() {
-              mode = m;
-              _reset();
-            }),
-        selectedColor: const Color(0xFF00A9FF),
-        labelStyle: TextStyle(color: sel ? Colors.white : Colors.black),
-        backgroundColor: Colors.white,
-        shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-            side: BorderSide(
-                color: sel ? Colors.transparent : Colors.grey.shade300)));
+  Widget _buildModeCard(String symbol, String label) {
+    final bool isSelected = _selectedMode == label;
+    return GestureDetector(
+      onTap: () => setState(() {
+        _selectedMode = label;
+        _reset();
+      }),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        decoration: BoxDecoration(
+            color: isSelected ? AppColors.primary : AppColors.white,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(
+                color: isSelected ? Colors.transparent : Colors.grey.shade300,
+                width: 1.5),
+            boxShadow: isSelected
+                ? [
+                    BoxShadow(
+                        color: AppColors.primary.withOpacity(0.3),
+                        blurRadius: 8,
+                        offset: const Offset(0, 4))
+                  ]
+                : null),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(symbol,
+                style: TextStyle(
+                    fontSize: 32,
+                    fontWeight: FontWeight.bold,
+                    color: isSelected ? Colors.white : AppColors.primary)),
+            Text(label,
+                style: TextStyle(
+                    fontSize: 14,
+                    color: isSelected ? Colors.white : AppColors.primary))
+          ],
+        ),
+      ),
+    );
   }
 
-  Widget _inp(TextEditingController c, String l) => TextField(
-      controller: c,
-      keyboardType: TextInputType.number,
-      decoration: InputDecoration(
-          labelText: l,
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-          filled: true,
-          fillColor: Colors.white,
-          prefixIcon: Icon(Icons.edit, size: 18)));
+  Widget _buildInput(TextEditingController ctrl, String label) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(label, style: const TextStyle(fontWeight: FontWeight.w500)),
+        const SizedBox(height: 8),
+        TextField(
+          controller: ctrl,
+          keyboardType: const TextInputType.numberWithOptions(decimal: true),
+          decoration: InputDecoration(
+            hintText: "0",
+            hintStyle: TextStyle(color: Colors.grey.shade400),
+            prefixIcon: const Icon(Icons.edit_outlined,
+                size: 18, color: AppColors.secondary),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildResultCard() {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+          color: AppColors.secondary.withOpacity(0.15),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: AppColors.secondary.withOpacity(0.5))),
+      child: Column(children: [
+        Text("Hasil Perhitungan",
+            style: TextStyle(
+                color: Colors.green[800], fontWeight: FontWeight.w600)),
+        const SizedBox(height: 4),
+        Text(_formulaDisplay,
+            style: TextStyle(color: Colors.green[900], fontSize: 14)),
+        const SizedBox(height: 8),
+        Text(_result,
+            style: TextStyle(
+                fontSize: 32,
+                fontWeight: FontWeight.bold,
+                color: Colors.green[900])),
+        const SizedBox(height: 16),
+        InkWell(
+            onTap: () {
+              Clipboard.setData(ClipboardData(text: _result));
+              ScaffoldMessenger.of(context)
+                  .showSnackBar(const SnackBar(content: Text("Disalin!")));
+            },
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              decoration: BoxDecoration(
+                  color: AppColors.secondary,
+                  borderRadius: BorderRadius.circular(20)),
+              child: const Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.copy, size: 14, color: Colors.white),
+                  SizedBox(width: 6),
+                  Text("Salin Hasil",
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold))
+                ],
+              ),
+            ))
+      ]),
+    );
+  }
 }

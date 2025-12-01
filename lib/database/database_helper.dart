@@ -5,11 +5,12 @@ import '../models/history_model.dart';
 class DatabaseHelper {
   static final DatabaseHelper instance = DatabaseHelper._init();
   static Database? _database;
+
   DatabaseHelper._init();
 
   Future<Database> get database async {
     if (_database != null) return _database!;
-    _database = await _initDB('resify_v2.db');
+    _database = await _initDB('resify_final.db');
     return _database!;
   }
 

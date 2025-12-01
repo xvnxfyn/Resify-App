@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'app_colors.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -7,51 +8,40 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.background,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Image.asset('lib/assets/images/resify_logo.png', width: 140),
+              Image.asset('lib/assets/images/resify_logo.png', width: 150),
               const SizedBox(height: 40),
               Text("Pilih Fitur Kalkulator",
                   style: GoogleFonts.poppins(
-                      color: Colors.grey[500], fontSize: 14)),
+                      color: AppColors.textGrey, fontSize: 14)),
               const SizedBox(height: 20),
-
-              // Tombol Resistor (Hijau)
               _buildMenuButton(
                   context,
                   "Kalkulator Resistor",
-                  const Color(0xFF4CAF50),
+                  AppColors.secondary,
                   "lib/assets/images/icon_resistor.png",
                   '/resistor'),
               const SizedBox(height: 16),
-
-              // Tombol Ohm (Biru)
-              _buildMenuButton(
-                  context,
-                  "Kalkulator Hukum Ohm",
-                  const Color(0xFF00A9FF),
-                  "lib/assets/images/icon_ohm.png",
-                  '/ohm'),
+              _buildMenuButton(context, "Kalkulator Hukum Ohm",
+                  AppColors.primary, "lib/assets/images/icon_ohm.png", '/ohm'),
               const SizedBox(height: 16),
-
-              // Tombol Riwayat (Putih Outline)
               OutlinedButton(
                 style: OutlinedButton.styleFrom(
-                  minimumSize: const Size(double.infinity, 60),
-                  side: BorderSide(color: Colors.grey.shade300),
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30)),
-                ),
+                    minimumSize: const Size(double.infinity, 60),
+                    side: const BorderSide(color: Color(0xFFE0E0E0)),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30)),
+                    backgroundColor: Colors.white),
                 onPressed: () => Navigator.pushNamed(context, '/history'),
                 child: Text("Lihat Riwayat",
                     style: GoogleFonts.poppins(
-                        color: const Color(0xFF00A9FF),
-                        fontWeight: FontWeight.w600)),
+                        color: AppColors.primary, fontWeight: FontWeight.w600)),
               )
             ],
           ),
@@ -74,7 +64,6 @@ class HomeScreen extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          // Menggunakan Image asset untuk icon
           Image.asset(iconPath, width: 24, height: 24, color: Colors.white),
           const SizedBox(width: 12),
           Text(title,

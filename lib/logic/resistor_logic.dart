@@ -1,5 +1,6 @@
-class ResistorLogic {
-  final Map<String, int> digitColors = {
+class ResistorCalculator {
+  // Data warna sebagai konstanta statis
+  static const Map<String, int> bandValues = {
     'Hitam': 0,
     'Cokelat': 1,
     'Merah': 2,
@@ -12,7 +13,7 @@ class ResistorLogic {
     'Putih': 9
   };
 
-  final Map<String, double> multipliers = {
+  static const Map<String, double> multipliers = {
     'Hitam': 1,
     'Cokelat': 10,
     'Merah': 100,
@@ -24,7 +25,7 @@ class ResistorLogic {
     'Perak': 0.01
   };
 
-  final Map<String, String> tolerances = {
+  static const Map<String, String> tolerances = {
     'Cokelat': '±1%',
     'Merah': '±2%',
     'Hijau': '±0.5%',
@@ -35,29 +36,31 @@ class ResistorLogic {
     'Perak': '±10%'
   };
 
-  String calculate4Band(String b1, String b2, String mul, String tol) {
-    int v1 = digitColors[b1] ?? 0;
-    int v2 = digitColors[b2] ?? 0;
+  String get4BandResult(String b1, String b2, String mul, String tol) {
+    int val1 = bandValues[b1] ?? 0;
+    int val2 = bandValues[b2] ?? 0;
     double m = multipliers[mul] ?? 1.0;
     String t = tolerances[tol] ?? '';
-    double result = ((v1 * 10) + v2) * m;
-    return "${_formatResult(result)} Ω $t";
+
+    double totalResistance = ((val1 * 10) + val2) * m;
+    return "${_formatValue(totalResistance)} Ω $t";
   }
 
-  String calculate5Band(
+  String get5BandResult(
       String b1, String b2, String b3, String mul, String tol) {
-    int v1 = digitColors[b1] ?? 0;
-    int v2 = digitColors[b2] ?? 0;
-    int v3 = digitColors[b3] ?? 0;
+    int val1 = bandValues[b1] ?? 0;
+    int val2 = bandValues[b2] ?? 0;
+    int val3 = bandValues[b3] ?? 0;
     double m = multipliers[mul] ?? 1.0;
     String t = tolerances[tol] ?? '';
-    double result = ((v1 * 100) + (v2 * 10) + v3) * m;
-    return "${_formatResult(result)} Ω $t";
+
+    double totalResistance = ((val1 * 100) + (val2 * 10) + val3) * m;
+    return "${_formatValue(totalResistance)} Ω $t";
   }
 
-  String _formatResult(double val) {
-    if (val >= 1000000) return "${(val / 1000000).toStringAsFixed(2)} M";
-    if (val >= 1000) return "${(val / 1000).toStringAsFixed(2)} k";
-    return val.toStringAsFixed(2);
+  String _formatValue(double val) {
+    if (val >= 1e6) return "${(val / 1e6).toStringAsFixed(2)} M";
+    if (val >= 1e3) return "${(val / 1e3).toStringAsFixed(2)} k";
+    return val.toStringAsFixed(2).replaceAll(RegExp(r"([.]*0)(?!.*\d)"), "");
   }
 }
