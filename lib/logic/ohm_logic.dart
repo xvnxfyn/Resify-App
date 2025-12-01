@@ -5,7 +5,7 @@ class OhmCalculator {
 
   String hitungArus({required double tegangan, required double hambatan}) {
     if (hambatan == 0) return "Error";
-    return "${(tegangan / hambatan).toStringAsFixed(4)} A";
+    return "${(tegangan / hambatan).toStringAsFixed(2)} A";
   }
 
   String hitungHambatan({required double tegangan, required double arus}) {
