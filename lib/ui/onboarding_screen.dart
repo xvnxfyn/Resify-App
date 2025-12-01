@@ -48,9 +48,15 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     children: [
                       Image.asset(_pages[index]["image"]!, height: 220),
                       const SizedBox(height: 40),
-                      Text(_pages[index]["title"]!, style: GoogleFonts.poppins(fontSize: 22, fontWeight: FontWeight.bold), textAlign: TextAlign.center),
+                      Text(_pages[index]["title"]!,
+                          style: GoogleFonts.poppins(
+                              fontSize: 22, fontWeight: FontWeight.bold),
+                          textAlign: TextAlign.center),
                       const SizedBox(height: 12),
-                      Text(_pages[index]["desc"]!, textAlign: TextAlign.center, style: TextStyle(color: Colors.grey[600], fontSize: 14)),
+                      Text(_pages[index]["desc"]!,
+                          textAlign: TextAlign.center,
+                          style:
+                              TextStyle(color: Colors.grey[600], fontSize: 14)),
                     ],
                   ),
                 );
@@ -61,20 +67,26 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             padding: const EdgeInsets.all(24.0),
             child: ElevatedButton(
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF00A9FF), 
-                foregroundColor: Colors.white,
-                minimumSize: const Size(double.infinity, 55),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-                elevation: 0
-              ),
+                  backgroundColor: const Color(0xFF00A9FF),
+                  foregroundColor: Colors.white,
+                  minimumSize: const Size(double.infinity, 55),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30)),
+                  elevation: 0),
               onPressed: () {
                 if (_currentPage == _pages.length - 1) {
                   Navigator.pushReplacementNamed(context, '/home');
                 } else {
-                  _controller.nextPage(duration: const Duration(milliseconds: 300), curve: Curves.ease);
+                  _controller.nextPage(
+                      duration: const Duration(milliseconds: 300),
+                      curve: Curves.ease);
                 }
               },
-              child: Text(_currentPage == _pages.length - 1 ? "Mulai Sekarang" : "Berikutnya", style: const TextStyle(fontWeight: FontWeight.bold)),
+              child: Text(
+                  _currentPage == _pages.length - 1
+                      ? "Mulai Sekarang"
+                      : "Berikutnya",
+                  style: const TextStyle(fontWeight: FontWeight.bold)),
             ),
           ),
           const SizedBox(height: 10),
