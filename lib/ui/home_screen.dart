@@ -7,40 +7,35 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F9FA),
+      backgroundColor: Colors.white,
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.all(24.0),
+          padding: const EdgeInsets.symmetric(horizontal: 24.0),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Image.asset('lib/assets/images/resify_logo.png', width: 140),
               const SizedBox(height: 40),
-              Text("Main Menu", style: GoogleFonts.poppins(color: Colors.grey[600], fontWeight: FontWeight.w500)),
+              Text("Pilih Fitur Kalkulator", style: GoogleFonts.poppins(color: Colors.grey[500], fontSize: 14)),
               const SizedBox(height: 20),
               
-              _buildMenuCard(context, "Kalkulator Resistor", Colors.redAccent, "lib/assets/images/icon_resistor.png", '/resistor'),
-              const SizedBox(height: 16),
-              _buildMenuCard(context, "Hukum Ohm", Colors.blueAccent, "lib/assets/images/icon_kalkulator.png", '/ohm'),
+              // Tombol Resistor (Hijau)
+              _buildMenuButton(context, "Kalkulator Resistor", const Color(0xFF4CAF50), "lib/assets/images/icon_resistor.png", '/resistor'),
               const SizedBox(height: 16),
               
+              // Tombol Ohm (Biru)
+              _buildMenuButton(context, "Kalkulator Hukum Ohm", const Color(0xFF00A9FF), "lib/assets/images/icon_ohm.png", '/ohm'),
+              const SizedBox(height: 16),
+              
+              // Tombol Riwayat (Putih Outline)
               OutlinedButton(
                 style: OutlinedButton.styleFrom(
                   minimumSize: const Size(double.infinity, 60),
                   side: BorderSide(color: Colors.grey.shade300),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                  backgroundColor: Colors.white
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
                 ),
                 onPressed: () => Navigator.pushNamed(context, '/history'),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(Icons.history, color: Colors.grey[700]), 
-                    const SizedBox(width: 12), 
-                    Text("Riwayat Perhitungan", style: GoogleFonts.poppins(color: Colors.grey[800], fontWeight: FontWeight.w600))
-                  ],
-                ),
+                child: Text("Lihat Riwayat", style: GoogleFonts.poppins(color: const Color(0xFF00A9FF), fontWeight: FontWeight.w600)),
               )
             ],
           ),
@@ -49,26 +44,23 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildMenuCard(BuildContext context, String title, Color color, String iconPath, String route) {
+  Widget _buildMenuButton(BuildContext context, String title, Color color, String iconPath, String route) {
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
         backgroundColor: color,
         foregroundColor: Colors.white,
-        minimumSize: const Size(double.infinity, 80),
-        elevation: 4,
-        shadowColor: color.withOpacity(0.4),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        minimumSize: const Size(double.infinity, 65),
+        elevation: 0,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
       ),
       onPressed: () => Navigator.pushNamed(context, route),
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Container(
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(color: Colors.white.withOpacity(0.2), borderRadius: BorderRadius.circular(12)),
-            child: Image.asset(iconPath, width: 32, height: 32, color: Colors.white),
-          ),
-          const SizedBox(width: 20), 
-          Text(title, style: GoogleFonts.poppins(fontSize: 18, fontWeight: FontWeight.bold))
+          // Menggunakan Image asset untuk icon
+          Image.asset(iconPath, width: 24, height: 24, color: Colors.white), 
+          const SizedBox(width: 12), 
+          Text(title, style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.bold))
         ],
       ),
     );

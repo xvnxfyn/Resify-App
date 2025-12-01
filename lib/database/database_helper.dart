@@ -5,12 +5,11 @@ import '../models/history_model.dart';
 class DatabaseHelper {
   static final DatabaseHelper instance = DatabaseHelper._init();
   static Database? _database;
-
   DatabaseHelper._init();
 
   Future<Database> get database async {
     if (_database != null) return _database!;
-    _database = await _initDB('resify_final.db');
+    _database = await _initDB('resify_v2.db');
     return _database!;
   }
 
@@ -39,7 +38,6 @@ class DatabaseHelper {
 
   Future<List<HistoryModel>> getAllHistory() async {
     final db = await instance.database;
-    // Urutkan dari yang terbaru (DESC)
     final result = await db.query('history', orderBy: 'timestamp DESC');
     return result.map((json) => HistoryModel.fromMap(json)).toList();
   }

@@ -12,72 +12,59 @@ class OhmScreen extends StatefulWidget {
 
 class _OhmScreenState extends State<OhmScreen> {
   final OhmLogic logic = OhmLogic();
-  String targetMode = "Tegangan"; 
-  final TextEditingController _c1 = TextEditingController();
-  final TextEditingController _c2 = TextEditingController();
+  String mode = "Tegangan"; 
+  final TextEditingController c1 = TextEditingController();
+  final TextEditingController c2 = TextEditingController();
   String result = "0.00";
-  bool hasCalculated = false;
+  bool done = false;
 
-  void _calculate() async {
-    if (_c1.text.isEmpty || _c2.text.isEmpty) return;
-    double v1 = double.tryParse(_c1.text) ?? 0;
-    double v2 = double.tryParse(_c2.text) ?? 0;
-    String res = "", detail = "";
+  void _calc() async {
+    if (c1.text.isEmpty || c2.text.isEmpty) return;
+    double v1 = double.tryParse(c1.text) ?? 0;
+    double v2 = double.tryParse(c2.text) ?? 0;
+    String res = "";
+    if (mode == "Tegangan") res = logic.hitungTegangan(v1, v2);
+    else if (mode == "Arus") res = logic.hitungArus(v1, v2);
+    else if (mode == "Hambatan") res = logic.hitungHambatan(v1, v2);
+    else res = logic.hitungDaya(v1, v2);
 
-    switch (targetMode) {
-      case "Tegangan": res = logic.hitungTegangan(v1, v2); detail = "I=$v1, R=$v2"; break;
-      case "Arus": res = logic.hitungArus(v1, v2); detail = "V=$v1, R=$v2"; break;
-      case "Hambatan": res = logic.hitungHambatan(v1, v2); detail = "V=$v1, I=$v2"; break;
-      case "Daya": res = logic.hitungDaya(v1, v2); detail = "V=$v1, I=$v2"; break;
-    }
-
-    setState(() { result = res; hasCalculated = true; });
-    await DatabaseHelper.instance.insertHistory(HistoryModel(type: "Ohm Law", input: detail, result: res, timestamp: DateTime.now().toString()));
-    if (!mounted) return;
+    setState(() { result = res; done = true; });
+    await DatabaseHelper.instance.insertHistory(HistoryModel(type: "Ohm Law", input: "Mode: $mode", result: res, timestamp: DateTime.now().toString()));
     FocusScope.of(context).unfocus();
   }
 
-  void _reset() { setState(() { _c1.clear(); _c2.clear(); result = "0.00"; hasCalculated = false; }); }
+  void _reset() { setState(() { c1.clear(); c2.clear(); result="0.00"; done=false; }); }
 
-  String _getLabel1() => targetMode == "Tegangan" ? "Arus (I)" : "Tegangan (V)";
-  String _getLabel2() {
-    if (targetMode == "Tegangan" || targetMode == "Arus") return "Hambatan (R)";
-    return "Arus (I)";
-  }
+  String _lbl1() => mode == "Tegangan" ? "Arus (I)" : "Tegangan (V)";
+  String _lbl2() => (mode == "Tegangan" || mode == "Arus") ? "Hambatan (R)" : "Arus (I)";
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[50],
-      appBar: AppBar(title: Text("Kalkulator Hukum Ohm", style: GoogleFonts.poppins(fontWeight: FontWeight.w600)), centerTitle: true),
+      appBar: AppBar(title: const Text("Kalkulator Hukum Ohm")),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Wrap(
-              spacing: 10, runSpacing: 10, alignment: WrapAlignment.center,
-              children: ["Tegangan", "Arus", "Hambatan", "Daya"].map((mode) => _buildChip(mode)).toList(),
-            ),
-            const SizedBox(height: 30),
-            _inputField(_c1, _getLabel1()),
-            const SizedBox(height: 16),
-            _inputField(_c2, _getLabel2()),
-            const SizedBox(height: 30),
+            Wrap(spacing: 10, runSpacing: 10, alignment: WrapAlignment.center, children: ["Tegangan", "Arus", "Hambatan", "Daya"].map((m)=>_chip(m)).toList()),
+            const SizedBox(height: 20),
+            Container(padding: const EdgeInsets.all(12), decoration: BoxDecoration(color: Colors.blue[50], borderRadius: BorderRadius.circular(8)), child: Text("Menghitung $mode...", style: TextStyle(color: Colors.blue[800]))),
+            const SizedBox(height: 20),
+            _inp(c1, _lbl1()), const SizedBox(height: 12), _inp(c2, _lbl2()),
+            const SizedBox(height: 20),
             Row(children: [
-              Expanded(child: ElevatedButton.icon(style: ElevatedButton.styleFrom(backgroundColor: Colors.blueAccent, foregroundColor: Colors.white, minimumSize: const Size.fromHeight(50), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))), onPressed: _calculate, icon: const Icon(Icons.calculate), label: const Text("HITUNG"))),
+              Expanded(child: ElevatedButton(style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF00A9FF), foregroundColor: Colors.white, minimumSize: const Size.fromHeight(50), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25))), onPressed: _calc, child: const Text("Hitung"))),
               const SizedBox(width: 10),
-              Expanded(child: OutlinedButton.icon(style: OutlinedButton.styleFrom(minimumSize: const Size.fromHeight(50), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))), onPressed: _reset, icon: const Icon(Icons.refresh), label: const Text("RESET"))),
+              Expanded(child: OutlinedButton(style: OutlinedButton.styleFrom(minimumSize: const Size.fromHeight(50), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25))), onPressed: _reset, child: const Text("Reset"))),
             ]),
-            const SizedBox(height: 30),
-            if(hasCalculated)
-            Container(
-              padding: const EdgeInsets.all(24),
-              width: double.infinity,
-              decoration: BoxDecoration(gradient: LinearGradient(colors: [Colors.blue.shade400, Colors.blue.shade800]), borderRadius: BorderRadius.circular(20), boxShadow: [BoxShadow(color: Colors.blue.withOpacity(0.3), blurRadius: 10, offset: const Offset(0,5))]),
+            const SizedBox(height: 20),
+            if(done) Container(
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(color: const Color(0xFFC8E6C9), borderRadius: BorderRadius.circular(16)),
               child: Column(children: [
-                const Text("Hasil Perhitungan", style: TextStyle(color: Colors.white70)),
-                const SizedBox(height: 5),
-                Text(result, style: GoogleFonts.poppins(fontSize: 36, fontWeight: FontWeight.bold, color: Colors.white)),
+                Text("Hasil Perhitungan:", style: TextStyle(color: Colors.green[800])),
+                Text(result, style: GoogleFonts.poppins(fontSize: 32, fontWeight: FontWeight.bold, color: Colors.green[900])),
               ]),
             )
           ],
@@ -86,23 +73,13 @@ class _OhmScreenState extends State<OhmScreen> {
     );
   }
 
-  Widget _buildChip(String label) {
-    bool selected = targetMode == label;
+  Widget _chip(String m) {
+    bool sel = mode == m;
     return ChoiceChip(
-      label: Text(label),
-      selected: selected,
-      onSelected: (val) => setState(() { targetMode = label; _reset(); }),
-      selectedColor: Colors.blueAccent,
-      labelStyle: TextStyle(color: selected ? Colors.white : Colors.black),
-      backgroundColor: Colors.white,
+      label: Text(m), selected: sel, onSelected: (v)=>setState((){mode=m;_reset();}),
+      selectedColor: const Color(0xFF00A9FF), labelStyle: TextStyle(color: sel?Colors.white:Colors.black),
+      backgroundColor: Colors.white, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12), side: BorderSide(color: sel?Colors.transparent:Colors.grey.shade300))
     );
   }
-
-  Widget _inputField(TextEditingController ctrl, String label) {
-    return TextField(
-      controller: ctrl,
-      keyboardType: TextInputType.number,
-      decoration: InputDecoration(labelText: label, border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)), filled: true, fillColor: Colors.white),
-    );
-  }
+  Widget _inp(TextEditingController c, String l) => TextField(controller: c, keyboardType: TextInputType.number, decoration: InputDecoration(labelText: l, border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)), filled: true, fillColor: Colors.white, prefixIcon: Icon(Icons.edit, size: 18)));
 }

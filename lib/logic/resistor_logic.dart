@@ -19,7 +19,6 @@ class ResistorLogic {
     int v2 = digitColors[b2] ?? 0;
     double m = multipliers[mul] ?? 1.0;
     String t = tolerances[tol] ?? '';
-
     double result = ((v1 * 10) + v2) * m;
     return "${_formatResult(result)} Ω $t";
   }
@@ -30,7 +29,6 @@ class ResistorLogic {
     int v3 = digitColors[b3] ?? 0;
     double m = multipliers[mul] ?? 1.0;
     String t = tolerances[tol] ?? '';
-
     double result = ((v1 * 100) + (v2 * 10) + v3) * m;
     return "${_formatResult(result)} Ω $t";
   }

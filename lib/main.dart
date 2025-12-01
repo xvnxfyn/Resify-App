@@ -21,8 +21,17 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         useMaterial3: true,
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
+        // Warna dasar aplikasi (Biru Langit Modern)
+        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF00A9FF)),
+        scaffoldBackgroundColor: const Color(0xFFF8F9FA), // Abu sangat muda
         textTheme: GoogleFonts.poppinsTextTheme(),
+        appBarTheme: const AppBarTheme(
+          backgroundColor: Color(0xFFF8F9FA),
+          elevation: 0,
+          centerTitle: true,
+          iconTheme: IconThemeData(color: Colors.black),
+          titleTextStyle: TextStyle(color: Colors.black, fontSize: 18, fontWeight: FontWeight.bold),
+        ),
       ),
       initialRoute: '/',
       routes: {
