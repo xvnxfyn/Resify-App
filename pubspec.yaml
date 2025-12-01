@@ -37,9 +37,4 @@ flutter:
 
   
   assets:
-    - lib/assets/images/resify_logo.png
-    - lib/assets/images/icon_resistor.png
-    - lib/assets/images/icon_kalkulator.png
-    - lib/assets/images/maskot_1.png
-    - lib/assets/images/maskot_2.png
-    - lib/assets/images/maskot_3.png
+    - lib/assets/images/
